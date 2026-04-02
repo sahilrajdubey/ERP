@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building2, Loader2, Info } from 'lucide-react';
@@ -19,7 +19,7 @@ const DEMO_EMAIL = process.env.NEXT_PUBLIC_DEMO_EMAIL || '';
 const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD || '';
 
 export default function LoginPage() {
-  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginInput>({
@@ -36,8 +36,7 @@ export default function LoginPage() {
       const result = await signIn(data.email, data.password);
       if (result.success) {
         toast.success('Welcome back!');
-        router.push('/dashboard');
-        router.refresh();
+        window.location.href = '/dashboard';
       } else {
         toast.error(result.error || 'Invalid credentials');
       }

@@ -52,27 +52,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Get user role for RBAC
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role, is_active')
-    .eq('auth_id', user.id)
-    .single();
-
-  // Check if user is active
-  if (profile && !profile.is_active) {
-    await supabase.auth.signOut();
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
-  const role = profile?.role || 'viewer';
-
-  // Admin-only routes
-  const adminOnlyRoutes = ['/employees', '/settings'];
-  if (adminOnlyRoutes.some(route => pathname.startsWith(route)) && role !== 'admin') {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
   return supabaseResponse;
 }
 
