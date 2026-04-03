@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EnterpriX ERP
+
+A production-grade, enterprise-level full-stack Enterprise Resource Planning (ERP) web application built with modern technologies.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Backend**: Supabase (PostgreSQL, Auth, Realtime, RLS)
+- **Charts**: Recharts
+- **Forms**: React Hook Form + Zod
+- **PDF Generation**: jsPDF
+
+## Features
+
+### Core Modules
+- **Dashboard**: KPI cards, revenue charts, low stock alerts
+- **Inventory**: Products, Categories, Warehouses management
+- **Suppliers**: Supplier network management with performance tracking
+- **Purchase Orders**: Multi-step workflow (draft → approved → ordered → received)
+- **Sales Orders**: Customer order management with status lifecycle
+- **Customers**: Customer database with order history
+- **Invoices**: Auto-generation from orders with PDF export
+- **Employees**: HR management with user account creation (Admin only)
+- **Reports**: Revenue trends, top products, inventory analytics
+- **Settings**: Company profile, user management, audit log (Admin only)
+
+### Role-Based Access Control (RBAC)
+- **Admin**: Full system access including user/settings management
+- **Manager**: Can create/update data, cannot delete critical records
+- **Viewer**: Read-only access to dashboards and reports
+
+### Security
+- Three-layer RBAC enforcement (Frontend, Middleware, Database RLS)
+- Supabase Auth with JWT session management
+- Row Level Security policies on all tables
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- Supabase account
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Environment Variables
+
+Create a `.env.local` file:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Install dependencies
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Run development server
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-To learn more about Next.js, take a look at the following resources:
+### Database Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Create a new Supabase project
+2. Run the SQL schema from `supabase/schema.sql` in the SQL editor
+3. Enable Row Level Security on all tables
+4. Add RLS policies from `supabase/policies.sql`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+├── app/
+│   ├── (auth)/           # Auth pages (login)
+│   ├── (dashboard)/      # Protected dashboard routes
+│   │   ├── dashboard/
+│   │   ├── inventory/
+│   │   ├── suppliers/
+│   │   ├── customers/
+│   │   ├── purchase-orders/
+│   │   ├── sales-orders/
+│   │   ├── invoices/
+│   │   ├── employees/
+│   │   ├── reports/
+│   │   └── settings/
+│   └── layout.tsx
+├── components/
+│   ├── ui/               # shadcn/ui components
+│   ├── layouts/          # App shell components
+│   ├── charts/           # Recharts wrappers
+│   ├── forms/            # Form dialogs
+│   └── data-table/       # TanStack Table wrapper
+├── lib/
+│   ├── actions/          # Server Actions
+│   ├── supabase/         # Supabase clients
+│   ├── utils/            # Utility functions
+│   ├── validations.ts    # Zod schemas
+│   └── constants.ts      # App constants
+├── types/
+│   └── database.ts       # TypeScript types
+└── middleware.ts         # Auth middleware
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Database Schema
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The database follows Third Normal Form (3NF) with the following core tables:
+- `roles`, `departments`, `employees`, `users`
+- `categories`, `products`, `warehouses`, `inventory`
+- `suppliers`, `supplier_products`
+- `customers`
+- `purchase_orders`, `po_items`
+- `sales_orders`, `so_items`
+- `invoices`
+- `stock_transactions`
+- `activity_log`
+
+### Database Triggers
+- Auto-increment inventory on PO received
+- Auto-decrement inventory on SO items created
+- Auto-calculate order totals
+- Audit logging for all INSERT/UPDATE/DELETE operations
+
+## Deployment
+
+### Vercel (Frontend)
+1. Connect your GitHub repository to Vercel
+2. Add environment variables
+3. Deploy
+
+### Supabase (Backend)
+1. Create production project
+2. Run migrations
+3. Enable RLS
+4. Update environment variables in Vercel
+
+## License
+
+MIT
