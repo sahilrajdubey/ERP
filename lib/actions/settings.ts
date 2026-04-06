@@ -70,7 +70,10 @@ export async function getActivityLogs(
     .from('activity_log')
     .select(`
       *,
-      user:users(email, full_name)
+      user:users(
+        role,
+        employee:employees(first_name, last_name, email)
+      )
     `)
     .order('created_at', { ascending: false })
     .limit(limit);

@@ -10,8 +10,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "EnterpriX ERP",
-  description: "Enterprise Resource Planning System",
+  title: "EnterpriX ERP | Enterprise Resource Planning",
+  description: "Advanced Enterprise Resource Planning System for modern businesses.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/favicon.ico",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -20,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <TooltipProvider>
           {children}
