@@ -4,7 +4,8 @@ import { useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Building2, Loader2, Info } from 'lucide-react';
+import Image from 'next/image';
+import { Loader2, Info } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,16 +59,22 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-4 shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-      <CardHeader className="space-y-4 text-center pb-2">
-        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-          <Building2 className="w-8 h-8 text-white" />
+    <Card className="w-full max-w-md mx-4 shadow-xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
+      <CardHeader className="space-y-4 text-center pb-2 pt-8">
+        <div className="mx-auto w-20 h-20 bg-slate-950 rounded-2xl flex items-center justify-center shadow-2xl ring-1 ring-blue-500/20 overflow-hidden">
+          <Image 
+            src="/logo.png" 
+            alt="EnterpriX Logo" 
+            width={80} 
+            height={80} 
+            className="object-cover"
+          />
         </div>
         <div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             EnterpriX ERP
           </CardTitle>
-          <CardDescription className="text-muted-foreground mt-1">
+          <CardDescription className="text-muted-foreground mt-1 font-medium italic">
             Enterprise Resource Planning System
           </CardDescription>
         </div>

@@ -3,9 +3,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search, Bell, User, LogOut, Settings, ChevronDown, Menu, Package, Users, ShoppingCart, FileText } from 'lucide-react';
+import { Search, Package, Users, ShoppingCart, FileText, Bell, User, LogOut, Settings, ChevronDown, Menu, AlertCircle, ShoppingBag, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
+import { getNotifications, type Notification } from '@/lib/actions/notifications';
+import { formatDistanceToNow } from 'date-fns';
 
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -44,6 +47,23 @@ export function AppHeader({ user }: AppHeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const data = await getNotifications();
+      setNotifications(data);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+    // Refresh notifications every 2 minutes
+    const interval = setInterval(fetchNotifications, 120000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
 
   const handleSearch = useCallback(async (query: string) => {
     if (query.length < 2) {
@@ -114,15 +134,75 @@ export function AppHeader({ user }: AppHeaderProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white flex items-center justify-center">
-              3
-            </span>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative group">
+                <Bell className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                {notifications.length > 0 && (
+                  <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-background ring-offset-0 animate-pulse" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80 p-0">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="p-4 border-b">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold">Notifications</span>
+                  {notifications.length > 0 && (
+                    <Badge variant="secondary" className="text-[10px] h-4">
+                      {notifications.length} New
+                    </Badge>
+                  )}
+                </div>
+              </DropdownMenuLabel>
+              <div className="max-h-[400px] overflow-y-auto no-scrollbar">
+                {notifications.length === 0 ? (
+                  <div className="p-8 text-center text-sm text-muted-foreground">
+                    <Bell className="h-8 w-8 mx-auto mb-2 opacity-20" />
+                    No new notifications
+                  </div>
+                ) : (
+                  notifications.map((notif) => (
+                    <DropdownMenuItem 
+                      key={notif.id} 
+                      asChild 
+                      className="p-4 cursor-pointer border-b last:border-0 focus:bg-muted/50"
+                    >
+                      <Link href={notif.link} className="flex gap-3">
+                        <div className={cn(
+                          "mt-1 h-8 w-8 rounded-full flex items-center justify-center shrink-0",
+                          notif.type === 'stock' ? "bg-red-50 text-red-600" : 
+                          notif.type === 'order' ? "bg-blue-50 text-blue-600" : 
+                          "bg-green-50 text-green-600"
+                        )}>
+                          {notif.type === 'stock' && <AlertCircle className="h-4 w-4" />}
+                          {notif.type === 'order' && <ShoppingBag className="h-4 w-4" />}
+                          {notif.type === 'invoice' && <CreditCard className="h-4 w-4" />}
+                        </div>
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                          <p className="text-sm font-medium line-clamp-1">{notif.title}</p>
+                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                            {notif.description}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground mt-1 font-medium">
+                            {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true })}
+                          </p>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))
+                )}
+              </div>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator className="m-0" />
+              <DropdownMenuItem className="p-3 justify-center text-xs text-muted-foreground font-medium hover:text-foreground cursor-pointer" asChild>
+                <Link href="/settings">View all activity</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 h-9 px-2">
                 <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white text-xs">

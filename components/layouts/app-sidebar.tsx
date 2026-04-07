@@ -40,6 +40,8 @@ import {
 } from '@/components/ui/collapsible';
 import type { Role } from '@/types';
 
+import Image from 'next/image';
+
 const iconMap = {
   LayoutDashboard,
   Package,
@@ -133,14 +135,20 @@ export function AppSidebar({ role }: AppSidebarProps) {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border px-6 py-4">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-md">
-            <Building2 className="h-5 w-5" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-950 overflow-hidden shadow-lg ring-1 ring-blue-500/20">
+            <Image 
+              src="/logo.png" 
+              alt="EnterpriX Logo" 
+              width={40} 
+              height={40} 
+              className="object-cover"
+            />
           </div>
           <div className="flex flex-col group-data-[collapsible=icon]:hidden">
             <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               EnterpriX
             </span>
-            <span className="text-xs text-muted-foreground -mt-0.5">ERP System</span>
+            <span className="text-xs text-muted-foreground -mt-0.5 font-medium">ERP System</span>
           </div>
         </Link>
       </SidebarHeader>
@@ -161,7 +169,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                   const filteredChildren = item.children.filter(child => child.roles.includes(role));
                   
                   return (
-                    <Collapsible key={item.title} defaultOpen={isActive} className="group/collapsible">
+                    <Collapsible key={item.title} className="group/collapsible">
                       <SidebarMenuItem>
                         <SidebarMenuButton
                           render={<CollapsibleTrigger />}

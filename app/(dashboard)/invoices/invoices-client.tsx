@@ -181,7 +181,7 @@ export function InvoicesClient({ invoices, userRole }: InvoicesClientProps) {
         const invoice = row.original;
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>

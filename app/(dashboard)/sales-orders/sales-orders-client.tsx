@@ -134,13 +134,13 @@ export function SalesOrdersClient({ orders, userRole }: SalesOrdersClientProps) 
         const order = row.original;
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href={`/sales-orders/${order.id}`}>
                   <Eye className="mr-2 h-4 w-4" />
                   View Details
