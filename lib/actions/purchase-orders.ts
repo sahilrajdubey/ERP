@@ -90,7 +90,7 @@ export async function createPurchaseOrder(input: PurchaseOrderInput): Promise<Ac
     product_id: item.product_id,
     quantity: item.quantity,
     unit_cost: item.unit_cost,
-    line_total: item.quantity * item.unit_cost,
+    // line_total is a GENERATED ALWAYS AS column (quantity * unit_cost) — do not insert
     received_quantity: 0,
   }));
 

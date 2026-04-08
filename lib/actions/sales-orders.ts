@@ -93,7 +93,7 @@ export async function createSalesOrder(input: SalesOrderInput): Promise<ActionRe
     quantity: item.quantity,
     unit_price: item.unit_price,
     discount_percent: item.discount_percent || 0,
-    line_total: item.quantity * item.unit_price * (1 - (item.discount_percent || 0) / 100),
+    // line_total is a GENERATED ALWAYS AS column (quantity * unit_price * (1 - discount_percent/100)) — do not insert
   }));
 
   const { error: itemsError } = await supabase.from('so_items').insert(items);
